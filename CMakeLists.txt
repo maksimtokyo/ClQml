@@ -8,7 +8,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/sources)
 
 add_subdirectory(external/td)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick Multimedia NetworkAuth)
+find_package(Qt6 REQUIRED COMPONENTS Quick Multimedia NetworkAuth Sql)
 
 qt_standard_project_setup(REQUIRES 6.8)
 
@@ -32,7 +32,9 @@ qt_add_qml_module(appCl
         sources/tgclient.h sources/tgclient.cpp
         sources/debugmodel.h sources/debugmodel.cpp
         sources/musiclist.h sources/musiclist.cpp
-        SOURCES sources/geniusclient.h sources/geniusclient.cpp
+        sources/geniusclient.h sources/geniusclient.cpp
+        sources/dbuser.h sources/dbuser.cpp
+        SOURCES sources/cluser.h sources/cluser.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -48,10 +50,10 @@ set_target_properties(appCl PROPERTIES
 
 target_link_libraries(appCl
     PRIVATE Qt6::Quick
-    PRIVATE Td::TdStatic
     PRIVATE Qt6::Multimedia
     PRIVATE Td::TdStatic
     PRIVATE Qt6::NetworkAuth
+    PRIVATE Qt6::Sql
 )
 
 include(GNUInstallDirs)

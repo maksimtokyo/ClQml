@@ -10,6 +10,9 @@
 #include "debugmodel.h"
 #include "musiclist.h"
 #include "tgclient.h"
+#include "geniusclient.h"
+#include "dbuser.h"
+#include "cluser.h"
 
 #include <cstdint>
 #include <functional>
@@ -37,7 +40,6 @@ class TgController : public  QObject {
     Q_PROPERTY (QString password READ password WRITE setpassword NOTIFY passwordChanged)
     Q_PROPERTY(QString view READ view NOTIFY viewChanged)
 
-
 public:
 
     enum TypeSignal{ OUT, IN};
@@ -47,7 +49,7 @@ public:
 
 
     void setphoneNumber(const QString &phoneNumber);
-    QString phoneNumber();
+    QString phoneNumber() const;
 
     QString code();
     void setcode(const QString &code);
@@ -90,5 +92,9 @@ private:
     QString m_password{""};
     QString m_view {"qmlfiles/phoneview.qml"};
     musiclist *m_mlist;
+    dbuser *db;
+
+
+    ClUser *m_cluser;
 };
 #endif // TGCONTROLLER_H

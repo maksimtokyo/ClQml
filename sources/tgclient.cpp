@@ -72,8 +72,7 @@ void tgclient::on_authorization_state_update(){
                                                       if (msg->content_->get_id() == td::td_api::messageAudio::ID) {
                                                           auto audio_msg = static_cast<td::td_api::messageAudio*>(msg->content_.get());
                                                           QString file_name = QString::fromStdString(audio_msg->audio_->file_name_);
-                                                          std::int32_t idm = audio_msg->audio_->audio_->id_;
-                                                          emit addAudio({file_name, idm});
+                                                          emit addAudio({file_name, audio_msg->audio_->audio_->id_});
                                                       }
                                                 }
                                             });
@@ -166,7 +165,6 @@ void tgclient::process_update(Object update)
                 QString file_name = QString::fromStdString(audio_msg->audio_->file_name_);
                 emit addAudio({file_name, audio_msg->audio_->audio_->id_});
             }
-
         },
         [this](td::td_api::updateChatLastMessage &u_chat_last_m){
             if (u_chat_last_m.chat_id_ != bot_user_id)
@@ -214,7 +212,7 @@ void tgclient::processCommands(){
     std::queue<std::function<void()>> localQueue;
 
     {
-        std::lock_guard<std::mutex> lock();
+        std::lock_guard<std::mutex> lock(m_mutex);
         std::swap(localQueue, m_queue);
     }
 

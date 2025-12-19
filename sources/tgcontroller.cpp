@@ -1,12 +1,14 @@
 #include "tgcontroller.h"
 
 TgController::TgController(QObject *parent)
-    : QObject(parent), client(new tgclient(this)), m_list(new musiclist(this))
+    : QObject(parent),
+      client(new tgclient),
+      m_mlist(new musiclist(this)),
+      db(new dbuser(this)),
+      m_cluser(new ClUser(this))
 {
-    // client = new tgclient;
 
     client->moveToThread(&wThread);
-//     m_mlist = new musiclist;
 
     connect(&wThread, &QThread::started, client, &tgclient::loop);
     connect(&wThread, &QThread::finished, client, &QObject::deleteLater);
@@ -106,14 +108,14 @@ void TgController::idautprocessing(TypeSignal type = OUT){
 }
 
 void TgController::setphoneNumber(const QString &phoneNumber){
-    if (m_phoneNumber != phoneNumber){
-        m_phoneNumber = phoneNumber;
+    if (m_cluser->getphonenumber()!= phoneNumber){
+        m_cluser->setphonenumber(phoneNumber);
         emit phoneNumberChanged(IN);
     }
 }
 
-QString TgController::phoneNumber(){
-    return m_phoneNumber;
+QString TgController::phoneNumber() const{
+    return m_cluser->getphonenumber();
 }
 
 TgController::~TgController(){}

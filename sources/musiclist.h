@@ -5,8 +5,6 @@
 #include <QAbstractListModel>
 #include <QStringList>
 
-
-
 struct music{
 
     QString musicpath {""};

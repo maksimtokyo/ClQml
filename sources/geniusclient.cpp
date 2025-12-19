@@ -3,7 +3,7 @@
 static constexpr auto authorizationUrl = "https://api.genius.com/oauth/authorize";
 static constexpr auto accessTokenUrl = "https://api.genius.com/oauth/token";
 
-geniusclient::geniusclient(QString clientId, QString clientSecret, QObject *parent) \
+geniusclient::geniusclient(QString clientId, QString clientSecret, QObject *parent)
     : clientId(clientId), clientSecret(clientSecret), QObject(parent)
 {
     auto replyHandler = new QOAuthHttpServerReplyHandler(QHostAddress::Any, 8080, this);
