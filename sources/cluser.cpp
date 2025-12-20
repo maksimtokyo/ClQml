@@ -75,6 +75,7 @@ bool ClUser::savetojsonfile(){
 
     QFile jsonfile(m_pathtojson);
     if (!jsonfile.open(QIODevice::WriteOnly)){
+        qDebug() << "Save save:    " << m_pathtojson;
         return false;
     }
 
@@ -162,7 +163,5 @@ void ClUser::setfirstmusicid(std::uint32_t firstmusicid){
 
 ClUser::~ClUser(){
     savetojsonfile();
-    qDebug() << "ClUser:: деструктор";
-
 }
 
