@@ -2,16 +2,21 @@
 
 TgController::TgController(QObject *parent)
     : QObject(parent),
+      wThread(new QThread),
       client(new tgclient),
       m_mlist(new musiclist(this)),
       db(new dbuser(this)),
       m_cluser(new ClUser(this))
 {
 
-    client->moveToThread(&wThread);
+    client->moveToThread(wThread);
 
-    connect(&wThread, &QThread::started, client, &tgclient::loop);
-    connect(&wThread, &QThread::finished, client, &QObject::deleteLater);
+
+
+    connect(wThread, &QThread::started, client, &tgclient::loop);
+    connect(client, &tgclient::finished, wThread, &QThread::quit);
+    connect(client, &tgclient::finished, &QThread::deleteLater);
+    connect(client, &tgclient::finished, client, &tgclient::deleteLater);
     connect(client, &tgclient::send_id_aut, this, &TgController::get_id_aut);
     connect(this, &TgController::idChanged, this,  &TgController::idautprocessing);
     connect(this, &TgController::phoneNumberChanged, this, &TgController::idautprocessing);
@@ -20,7 +25,7 @@ TgController::TgController(QObject *parent)
     connect(client, &tgclient::addAudio, m_mlist, &musiclist::addmusic, Qt::QueuedConnection);
     connect(this, &TgController::installMusicSignal, this, &TgController::installMusic);
 
-    wThread.start();
+    wThread->start();
 }
 
 void TgController::get_id_aut(int32_t idaut){
@@ -51,7 +56,7 @@ void TgController::idautprocessing(TypeSignal type = OUT){
                 m_view = "qmlfiles/phoneview.qml";
                 emit viewChanged();
             } else{
-                auto cmd = [this, phone = m_phoneNumber]() {
+                auto cmd = [this, phone = m_cluser->getphonenumber()]() {
                     auto request = td::td_api::make_object<td::td_api::setAuthenticationPhoneNumber>(phone.toStdString(), nullptr);
                     this->client->send_query(std::move(request), {});
                 };
@@ -118,7 +123,13 @@ QString TgController::phoneNumber() const{
     return m_cluser->getphonenumber();
 }
 
-TgController::~TgController(){}
+TgController::~TgController(){
+    if (wThread && wThread->isRunning()) {
+        wThread->quit();
+        wThread->wait();
+    }
+    delete wThread;
+}
 
 QString TgController::view(){
     return m_view;
@@ -187,6 +198,14 @@ void TgController::sendlink(QString link){
         this->client->send_query(std::move(request), {});
     };
 
+    client->postCommand(std::move(cmd));
+}
+
+
+void TgController::finishworkthread(){
+    auto cmd = [this](){
+        this->client->exitcl();
+    };
     client->postCommand(std::move(cmd));
 }
 

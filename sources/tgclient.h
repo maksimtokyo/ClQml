@@ -57,6 +57,8 @@ public:
     std::queue<int> music_queue;
     DebugModel *m_deblist;
 
+    void exitcl(){ need_exit = true; }
+
 
 public slots:
     void loop();
@@ -66,6 +68,7 @@ signals:
     void send_id_aut(int32_t idaut);
     void addAudio(music msg);
     void setPath(int index, QString path);
+    void finished();
 
 private:
 
@@ -91,6 +94,8 @@ private:
     std::map<std::int64_t, std::string> chat_title_;
     std::uint64_t next_query_id();
     std::uint64_t bot_user_id{0};
+
+    bool need_exit{false};
 };
 
 #endif // TGCLIENT_H

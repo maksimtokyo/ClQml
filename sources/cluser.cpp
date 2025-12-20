@@ -2,8 +2,18 @@
 
 
 ClUser::ClUser(QObject *parent, QString pathtojson)
-    : QObject(parent), m_pathtojson(pathtojson)
+    : QObject(parent),
+      m_pathtojson(pathtojson),
+      m_phonenumber(""),
+      m_username(""),
+      m_imgpath(""),
+      m_firstmusicid(0),
+      m_lastmusicid(0),
+      m_lastmusicname(""),
+      m_lastmusicpath(""),
+      m_lastmusictimestop(0)
 {
+    qDebug() << "Path to json: " << m_pathtojson;
     loadfromjsonfile();
 }
 
@@ -150,5 +160,9 @@ void ClUser::setfirstmusicid(std::uint32_t firstmusicid){
     m_firstmusicid = firstmusicid;
 }
 
+ClUser::~ClUser(){
+    savetojsonfile();
+    qDebug() << "ClUser:: деструктор";
 
+}
 

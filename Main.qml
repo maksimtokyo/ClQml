@@ -9,6 +9,10 @@ Window {
     height: 480
     visible: true
 
+    onClosing:{
+        roottgcontoller.finishworkthread();
+    }
+
 
     Rectangle{
         color: "#1d586b"

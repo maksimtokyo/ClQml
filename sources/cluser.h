@@ -34,6 +34,8 @@ public:
     QString getlastmusicpath() const;
     int getlastmusictimestop() const;
 
+    ~ClUser();
+
 private:
 
     bool loadfromjsonfile();

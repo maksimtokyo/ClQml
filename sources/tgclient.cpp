@@ -65,9 +65,19 @@ void tgclient::on_authorization_state_update(){
                                           request->limit_ = 50;
                                           request->only_local_ = false;
 
+
+
                                           send_query(std::move(request),
                                               [this](Object ob) {
                                                   auto result = td::move_tl_object_as<td::td_api::messages>(ob);
+
+                                                  if (!result->messages_.empty()){
+                                                        return;
+                                                  }
+
+                                                  std::uint32_t first_message_id = result->messages_[0]->id_;
+
+
                                                   for (auto &msg : result->messages_) {
                                                       if (msg->content_->get_id() == td::td_api::messageAudio::ID) {
                                                           auto audio_msg = static_cast<td::td_api::messageAudio*>(msg->content_.get());
@@ -225,11 +235,13 @@ void tgclient::processCommands(){
 
 void tgclient::loop()
 {
-    while (true)
+    while (!need_exit)
     {
         processCommands();
         process_response(client_manager_->receive(1));
     }
+
+    emit finished();
 }
 
 void tgclient::postCommand(std::function<void()> cmd){

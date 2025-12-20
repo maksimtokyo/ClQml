@@ -33,6 +33,7 @@
 class TgController : public  QObject {
     Q_OBJECT
     QML_NAMED_ELEMENT(TgController)
+
     Q_PROPERTY(DebugModel* deblist READ deblist  NOTIFY deblistChanged)
     Q_PROPERTY (musiclist* listmodel READ listmodel NOTIFY listmodelChanged)
     Q_PROPERTY(QString phoneNumber READ phoneNumber WRITE setphoneNumber NOTIFY phoneNumberChanged)
@@ -61,7 +62,7 @@ public:
     QString view();
     ~TgController();
 
-
+    Q_INVOKABLE void finishworkthread();
 signals:
 
     void deblistChanged();
@@ -84,10 +85,9 @@ public slots:
 
 private:
 
-    QThread wThread;
+    QThread* wThread;
     int32_t m_curid{-1};
     tgclient *client{nullptr};
-    QString m_phoneNumber{""};
     QString m_code{""};
     QString m_password{""};
     QString m_view {"qmlfiles/phoneview.qml"};
